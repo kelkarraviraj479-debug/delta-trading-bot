@@ -8,12 +8,14 @@ import json
 # GitHub Secrets मधून API Keys वाचणे
 API_KEY = os.environ.get("DELTA_API_KEY")
 API_SECRET = os.environ.get("DELTA_API_SECRET")
-BASE_URL = "https://api.delta.exchange"
+
+# तुम्ही App वापरत असल्यामुळे Delta India ची API URL वापरली आहे
+BASE_URL = "https://api.india.delta.exchange"
 
 def generate_signature(method, path, payload="", timestamp=""):
     signature_data = method + timestamp + path + payload
     message = bytes(signature_data, 'utf-8')
-    secret = bytes(API_SECRET, 'utf-8')
+    secret = bytes(API_SECRET if API_SECRET else "", 'utf-8')
     return hmac.new(secret, message, digestmod=hashlib.sha256).hexdigest()
 
 def get_headers(method, path, payload=""):
@@ -27,20 +29,25 @@ def get_headers(method, path, payload=""):
     }
 
 def run_bot():
-    print("--- Delta Exchange Auto Trading Bot Active ---")
+    print("--- Delta Exchange India Bot Active ---")
+    
+    if not API_KEY or not API_SECRET:
+        print("Error: API_KEY किंवा API_SECRET सापडले नाही! GitHub Secrets तपासा.")
+        return
+
     path = "/v2/wallet/balances"
     headers = get_headers('GET', path)
-    
+
     try:
         response = requests.get(BASE_URL + path, headers=headers)
         if response.status_code == 200:
-            print("Successfully Connected to Delta Exchange!")
-            print("Wallet Data:", response.json())
+            print("✅ Successfully Connected to Delta Exchange India!")
+            print("Wallet Data:", json.dumps(response.json(), indent=2))
         else:
-            print(f"Connection Error: {response.text}")
+            print(f"❌ Connection Error: {response.text}")
     except Exception as e:
         print(f"Execution Error: {e}")
 
 if __name__ == "__main__":
     run_bot()
-  
+    
