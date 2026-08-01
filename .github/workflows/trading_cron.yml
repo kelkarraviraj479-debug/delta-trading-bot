@@ -24,7 +24,7 @@ jobs:
 
       - name: Run Trading Bot
         env:
-          DELTA_API_KEY: ${{ secrets.DELTA_API_KEY }}
-          DELTA_API_SECRET: ${{ secrets.DELTA_API_SECRET }}
+          DELTA_API_KEY: ${{ secrets.EXCHANGE_API_KEY }}
+          DELTA_API_SECRET: ${{ secrets.EXCHANGE_SECRET_KEY }}
         run: python bot.py
         
